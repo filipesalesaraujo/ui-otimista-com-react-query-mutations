@@ -58,7 +58,6 @@ export const ProductList = ({ onProductDetail }: ProductsListProps) => {
   return (
     <div className="container">
       <h1>Products List</h1>
-
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -83,7 +82,7 @@ export const ProductList = ({ onProductDetail }: ProductsListProps) => {
         <input name="image" placeholder="Type the product image link" />
         <input type="submit" value="Salvar" />
       </form>
-
+      {mutation.isLoading && <p>Saving the product...</p>}
       <table>
         <thead>
           <tr>
