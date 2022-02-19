@@ -9,6 +9,12 @@ const fetchProducts = () => {
   );
 };
 
+const saveProducts = (product: IProduct) => {
+  return Axios.post(`http://localhost:3333/products`, product).then(
+    (response) => response.data
+  );
+};
+
 type ProductsListProps = {
   onProductDetail: (id: number) => void;
 };
@@ -41,7 +47,7 @@ export const ProductList = ({ onProductDetail }: ProductsListProps) => {
             description,
             image,
           } as IProduct;
-          console.log(newProduct);
+          saveProducts(newProduct);
         }}
       >
         <input name="name" placeholder="Type the product name" />
