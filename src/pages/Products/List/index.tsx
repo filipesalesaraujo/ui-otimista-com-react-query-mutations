@@ -1,7 +1,7 @@
 import React from "react";
 import Axios from "axios";
 import { IProduct } from "../../../types/IProduct";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 const fetchProducts = () => {
   return Axios.get(`http://localhost:3333/products`).then(
@@ -20,9 +20,36 @@ type ProductsListProps = {
 };
 
 export const ProductList = ({ onProductDetail }: ProductsListProps) => {
-  const { data: products, isLoading } = useQuery<IProduct[]>(["products"], () =>
+  const queryClient = useQueryClient();
+  const queryKey = ["products"];
+
+  const { data: products, isLoading } = useQuery<IProduct[]>(queryKey, () =>
     fetchProducts()
   );
+
+  const mutation = useMutation(saveProducts, {
+    onMutate: async (updatedProduct) => {
+      // cancel the current queries
+      await queryClient.cancelQueries(queryKey);
+
+      // get current state
+      const previudsState = queryClient.getQueriesData(queryKey);
+
+      // update the current cache
+      queryClient.setQueryData<IProduct[]>(queryKey, (oldState) => {
+        return [...(oldState ?? []), updatedProduct];
+      });
+
+      return { previudsState };
+    },
+    onError: async (err, variavles, context) => {
+      const { previudsState } = context as { previudsState: IProduct[] };
+      queryClient.setQueryData(queryKey, previudsState);
+    },
+    onSettled: async () => {
+      queryClient.invalidateQueries(queryKey);
+    },
+  });
 
   if (isLoading || !products) {
     return <h1>Loading products list ...</h1>;
@@ -47,7 +74,7 @@ export const ProductList = ({ onProductDetail }: ProductsListProps) => {
             description,
             image,
           } as IProduct;
-          saveProducts(newProduct);
+          mutation.mutate(newProduct);
         }}
       >
         <input name="name" placeholder="Type the product name" />
@@ -68,8 +95,8 @@ export const ProductList = ({ onProductDetail }: ProductsListProps) => {
 
         <tbody>
           {products.map((product) => (
-            <tr key={product.id}>
-              <td>{product.id}</td>
+            <tr key={product.id ?? new Date().getTime()}>
+              <td>{product.id ?? "..."}</td>
               <td>{product.name}</td>
               <td>
                 <a

@@ -20,6 +20,20 @@
       "price": "615.00",
       "description": "Distinctio non a vel nisi voluptatem.",
       "image": "https://fakeimg.pl/350x200/?text=Intelligent Steel Hat"
+    },
+    {
+      "name": "Batata",
+      "price": "50.00",
+      "description": "Um batata",
+      "image": "https://static7.depositphotos.com/1002351/792/i/600/depositphotos_7926477-stock-photo-new-potato.jpg",
+      "id": 3
+    },
+    {
+      "name": "Anão Boliviano",
+      "price": "1.000.000.000.00",
+      "description": "Anão boliviano com 0.75 de altura, brinde, uma flauta",
+      "image": "https://pbs.twimg.com/media/EfULgekWsAAn8rH.jpg",
+      "id": 4
     }
   ]
 }
